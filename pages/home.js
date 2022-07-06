@@ -14,6 +14,7 @@ export default function Home({ initialTweets }) {
   const router = useRouter()
 
   if (loading) {
+      console.log('Still loading home')
     return null
   }
 

@@ -11,6 +11,7 @@ export default function Index({ tweets }) {
   const loading = status === 'loading'
 
   if (loading) {
+    console.log('loading index')
     return null
   }
 

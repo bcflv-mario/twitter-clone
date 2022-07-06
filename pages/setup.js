@@ -7,10 +7,11 @@ export default function Setup() {
   const { data: session, status } = useSession()
   const loading = status === 'loading'
   const [name, setName] = useState('')
+  const [nameExists, setNameExists] = useState(false)
   if (!session || !session.user) return null
 	if (loading) return null
 
-  if (!loading && session.user.name) {
+  if (!loading && session.user.name && !nameExists) {
     router.push('/home')
   }
 
@@ -19,7 +20,8 @@ export default function Setup() {
       className='mt-10 ml-20'
       onSubmit={async (e) => {
         e.preventDefault()
-        await fetch('/api/setup', {
+
+        const userName = await fetch('/api/setup', {
           body: JSON.stringify({
             name
           }),
@@ -29,7 +31,11 @@ export default function Setup() {
           method: 'POST',
         })
 				session.user.name = name
-        router.push('/home')
+        if(userName.ok) {
+          setNameExists(false)
+          router.push('/home')
+        }
+        setNameExists(true)
       }}
     >
       <div className='flex-1 mb-5'>
@@ -41,6 +47,7 @@ export default function Setup() {
           onChange={(e) => setName(e.target.value)}
           className='border p-1'
         />
+        {nameExists && <p>User name already taken, try again</p>}
       </div>
 
       <button className='border px-8 py-2 mt-0 mr-8 font-bold rounded-full color-accent-contrast bg-color-accent hover:bg-color-accent-hover'>
